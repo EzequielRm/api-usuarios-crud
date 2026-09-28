@@ -1,0 +1,13 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?Define JWT_SECRET_KEY antes de iniciar Compose}
+      DATABASE_URL: sqlite:////app/data/usuarios.db
+    volumes:
+      - usuarios_data:/app/data
+
+volumes:
+  usuarios_data:

@@ -67,6 +67,19 @@ pip install -r requirements.txt
 
 Desde la raíz del proyecto:
 
+Configura una clave secreta para firmar los tokens (usa una clave aleatoria y mantenla privada):
+
+En Windows PowerShell:
+```powershell
+$env:JWT_SECRET_KEY = "<clave-aleatoria-larga>"
+```
+
+En Windows CMD:
+```cmd
+set JWT_SECRET_KEY=<clave-aleatoria-larga>
+```
+
+Luego inicia la API:
 ```bash
 uvicorn main:app --reload
 ```
@@ -78,6 +91,24 @@ La documentación interactiva queda en:
 - http://127.0.0.1:8000/docs
 - http://127.0.0.1:8000/redoc
 
+## Docker
+
+Con Docker Desktop instalado, desde la raíz del proyecto configura la clave JWT y levanta la API:
+
+En Windows CMD:
+```cmd
+set JWT_SECRET_KEY=una-clave-local-larga
+docker compose up --build
+```
+
+En PowerShell:
+```powershell
+$env:JWT_SECRET_KEY = "una-clave-local-larga"
+docker compose up --build
+```
+
+La API queda disponible en `http://localhost:8000`. Compose guarda SQLite en un volumen persistente llamado `usuarios_data`, así que los datos sobreviven a la recreación del contenedor. Para detenerlo, pulsa `Ctrl+C` o ejecuta `docker compose down`. No subas una clave real al repositorio; en Render configúrala como variable de entorno del servicio.
+
 ## Endpoints
 
 | Método | Endpoint | Descripción |
@@ -87,6 +118,9 @@ La documentación interactiva queda en:
 | GET | `/usuarios/{usuario_id}` | Obtener un usuario por ID |
 | PUT | `/usuarios/{usuario_id}` | Actualizar un usuario |
 | DELETE | `/usuarios/{usuario_id}` | Eliminar un usuario |
+| POST | `/token` | Iniciar sesión y obtener un JWT |
+
+El registro solicita `nombre`, `apellido`, `email` y `password` (mínimo 8 caracteres). Para iniciar sesión, envía `username` con el email y `password` como formulario a `/token`. Las rutas de consulta, actualización y eliminación requieren un token bearer; en `/docs`, usa **Authorize** para iniciar sesión. Los tokens expiran en 30 minutos.
 
 ## Ejemplo de creación
 
